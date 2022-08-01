@@ -20,26 +20,30 @@ func main() {
 		gin.Recovery(),
 		gin.Logger(),
 		//middleware.Logger(),
-		middleware.BasicAuth(),
 		// Adds extra details about the request
 		//gindump.Dump(),
 		)
 
-	router.GET("/videos", func(c *gin.Context) {
-		c.JSON(http.StatusOK, videoController.FindAll())
-	})
-	router.POST("/videos", func(c *gin.Context) {
-		err := videoController.Save(c)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"message": err.Error(),
-			})
-		}else {
-			c.JSON(http.StatusCreated, gin.H{
-				"message": "Video saved!",
-			})
-		}
-	})
+	// Group routes together
+	apiRoutes := router.Group("/api", middleware.BasicAuth())
+	{
+		apiRoutes.GET("/videos", func(c *gin.Context) {
+			c.JSON(http.StatusOK, videoController.FindAll())
+		})
 
-	router.Run(":6969")
+		apiRoutes.POST("/videos", func(c *gin.Context) {
+			err := videoController.Save(c)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"message": err.Error(),
+				})
+			} else {
+				c.JSON(http.StatusCreated, gin.H{
+					"message": "Video saved!",
+				})
+			}
+		})
+	}
+
+	router.Run()
 }
