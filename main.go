@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"os"
 	"sstut/controller"
 	"sstut/middleware"
 	"sstut/service"
@@ -45,5 +46,9 @@ func main() {
 		})
 	}
 
-	router.Run()
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	router.Run(":"+port)
 }
