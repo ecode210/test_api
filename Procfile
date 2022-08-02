@@ -1,1 +1,1 @@
-web: bin/golang-gin-poc
+web: go run main.go
